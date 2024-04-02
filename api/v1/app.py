@@ -28,6 +28,13 @@ def error_404(e):
     return make_response(jsonify(msg), headers)
 
 
+@app.errorhandler(400)
+def handle_400(e):
+    """ Handles error 400. """
+    msg = {"error": e.description}
+    return make_response(jsonify(msg), 400)
+
+
 if __name__ == "__main__":
     """ Runs the Flask App """
     app.run(host=host, port=port, threaded=True)
