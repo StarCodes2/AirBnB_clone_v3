@@ -68,6 +68,46 @@ test_db_storage.py'])
                             "{:s} method needs a docstring".format(func[0]))
 
 
+class TestDBStorageMethods(unittest.TestCase):
+    """Tests the DBStorage methods."""
+    @classmethod
+    def setUpClass(cls):
+        """Set up for method tests."""
+        pass
+
+    @classmethod
+    def terDownClass(cls):
+        """Clean up for method tests."""
+        pass
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_method(self):
+        """Test for get method"""
+        user_dict = {"email": "annu.ezekiel02@gmail.com", "password": "pass",
+                     "first_name": "Ezekiel", "last_name": "Ogunewu"}
+        user = User(**user_dict)
+        user.save()
+        newUser = models.storage.get(user.__class__, user.id)
+        self.assertEqual(newUser.id, user.id)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count_method(self):
+        """Tests the count method"""
+        old = models.storage.count()
+        user_dict = {"email": "anu@gmail.com", "password": "pass"}
+        user = User(**user_dict)
+        user.save()
+        new = models.storage.count()
+        self.assertEqual(old + 1, new)
+
+        old = models.storage.count(user.__class__)
+        user_dict["email"] = "anu12@gmail.com"
+        user2 = User(**user_dict)
+        user2.save()
+        new = models.storage.count(user.__class__)
+        self.assertEqual(old + 1, new)
+
+
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
