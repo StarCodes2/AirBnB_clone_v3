@@ -40,8 +40,8 @@ class TestFileStorageDocs(unittest.TestCase):
     def test_pep8_conformance_test_file_storage(self):
         """Test tests/test_models/test_file_storage.py conforms to PEP8."""
         pep8s = pep8.StyleGuide(quiet=True)
-        result = pep8s.check_files(['tests/test_models/test_engine/\
-test_file_storage.py'])
+        result = pep8s.check_files(['tests/test_models/test_engine/'
+                                   'test_file_storage.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
@@ -113,3 +113,32 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storagge")
+    def test_get(self):
+        """Test that get works properly."""
+        storage = FileStorage()
+        user_dict = {"email": "anu@gmail.com", "password": "pass",
+                     "first_name": "Ezekiel", "last_name": "Ogunewu"}
+        user = User(**user_dict)
+        user.save()
+        newUser = storage.get(user.__class__, user.id)
+        self.assertEqual(user.first_name, newUser.first_name)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count(self):
+        """Tests the count method"""
+        storage = FileStorage()
+        user_dict = {"email": "anu23@gmail.com", "password": "pass"}
+        old = storage.count()
+        user = User(**user_dict)
+        user.save()
+        new = storage.count()
+        self.assertEqual(old + 1, new)
+
+        old = storage.count(user.__class__)
+        user_dict["email"] = "anu25@gmail.com"
+        user2 = User(**user_dict)
+        user2.save()
+        new = storage.count(user2.__class__)
+        self.assertEqual(old + 1, new)
