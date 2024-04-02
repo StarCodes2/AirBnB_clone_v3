@@ -58,6 +58,16 @@ class BaseModel:
         models.storage.new(self)
         models.storage.save()
 
+    def update_obj(self, attr_dict=None):
+        """ Updates the attributes of an object. """
+        ignore = ["id", "created_at", "updated_at", "email", "state_id",
+                  "city_id", "place_id", "user_id"]
+        if attr_dict:
+            for key, value in attr_dict.items():
+                if key not in ignore:
+                    setattr(self, key, value)
+            self.save()
+
     def to_dict(self):
         """returns a dictionary containing all keys/values of the instance"""
         new_dict = self.__dict__.copy()
