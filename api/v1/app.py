@@ -32,7 +32,8 @@ def error_404(e):
 def handle_400(e):
     """ Handles error 400. """
     msg = {"error": e.description}
-    return make_response(jsonify(msg), 400)
+    headers = e.__str__().split()[0]
+    return make_response(jsonify(msg), headers)
 
 
 if __name__ == "__main__":
